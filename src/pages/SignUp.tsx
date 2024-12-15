@@ -1,12 +1,15 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
+import { login } from '../features/session/sessionSlice';
 import * as api from '../services/api';
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const initialValues = {
     email: '',
@@ -29,6 +32,11 @@ const SignUp: React.FC = () => {
     try {
       const response = await api.postData('/auth/signup', values);
       console.log('SignUp successful:', response);
+
+      dispatch(login(response.data.user));
+
+      localStorage.setItem('token', response.data.token);
+
       navigate('/application');
     } catch (error) {
       console.error('SignUp error:', error);
