@@ -3,6 +3,9 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
+import * as api from '../services/api';
+
+
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
 
@@ -16,9 +19,14 @@ const SignIn: React.FC = () => {
     password: Yup.string().required('Password is required'),
   });
 
-  const handleSubmit = (values: typeof initialValues) => {
-    console.log('Form submitted:', values);
-    navigate('/application');
+  const handleSubmit = async (values: typeof initialValues) => {
+    try {
+      const response = await api.postData('/auth/signin', values);
+      console.log('SignIn successful:', response);
+      navigate('/application');
+    } catch (error) {
+      console.error('SignIn error:', error);
+    }
   };
 
   return (
